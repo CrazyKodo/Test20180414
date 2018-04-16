@@ -12,23 +12,50 @@
     }
 </style>
 
+<script type="text/javascript">
+function AutoResizeImage(maxWidth,maxHeight,objImg){
+var img = new Image();
+img.src = objImg.src;
+var hRatio;
+var wRatio;
+var Ratio = 1;
+var w = img.width;
+var h = img.height;
+wRatio = maxWidth / w;
+hRatio = maxHeight / h;
+if (maxWidth ==0 && maxHeight==0){
+Ratio = 1;
+}else if (maxWidth==0){//
+if (hRatio<1) Ratio = hRatio;
+}else if (maxHeight==0){
+if (wRatio<1) Ratio = wRatio;
+}else if (wRatio<1 || hRatio<1){
+Ratio = (wRatio<=hRatio?wRatio:hRatio);
+}
+if (Ratio<1){
+w = w * Ratio;
+h = h * Ratio;
+}
+objImg.height = h;
+objImg.width = w;
+}
+</script>
 
 
 
+<div class="panel panel-default" style="text-align:center;">
 
-<div class="panel panel-default">
 
-
-    <table class="panel-body table table-striped table-bordered">
+    <table class="panel-body table table-striped table-bordered" style="width:600px;margin:auto;">
         <thead>
             <tr>
 
-                <th>Title @Html.ActionLink("Sort", "Index", new { Sort = "Title", page = Model.pageNumber, size = Model.pageSize }, new { @class = "btn btn-xs btn-success" })</th>
-                <th>Price @Html.ActionLink("Sort", "Index", new { Sort = "Price", page = Model.pageNumber, size = Model.pageSize }, new { @class = "btn btn-xs btn-success" })</th>
-                <th>Make @Html.ActionLink("Sort", "Index", new { Sort = "Make", page = Model.pageNumber, size = Model.pageSize }, new { @class = "btn btn-xs btn-success" })</th>
-                <th>Model</th>
-                <th>Img</th>
-                <th>ImgUrl</th>
+                <th >
+                    Title @Html.ActionLink("Sort", "Index", new { Sort = "Title", page = Model.pageNumber, size = Model.pageSize }, new { @class = "btn btn-xs btn-success" })
+                    Price @Html.ActionLink("Sort", "Index", new { Sort = "Price", page = Model.pageNumber, size = Model.pageSize }, new { @class = "btn btn-xs btn-success" })
+                    Make @Html.ActionLink("Sort", "Index", new { Sort = "Make", page = Model.pageNumber, size = Model.pageSize }, new { @class = "btn btn-xs btn-success" })
+                </th>
+
 
             </tr>
         </thead>
@@ -36,15 +63,16 @@
 
             @foreach (var item in Model.results)
             {
-            <tr>
-                <td>@item.title</td>
-                <td>@item.price</td>
-                <td>@item.make</td>
-                <td>@item.model</td>
-                <td><img src="@item.GetDisplayImgUrl()" style="height:50px;font-weight:50px;" /></td>
-                <td>@item.GetDisplayImgUrl()</td>
-
-            </tr>
+                <tr>
+                    <td style="vertical-align:central;text-align:center;">
+                        <img src="@item.GetDisplayImgUrl()" style="width:500px;" onload="AutoResizeImage(500,0,this)" />
+                                                                          <br />
+                        @item.title <br />
+                        Price: @item.price |
+                        Make: @item.make |
+                        Model:@item.model 
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -63,7 +91,7 @@
                     <li class="active">@Html.ActionLink(i.ToString(), "Index", new { Sort = Model.sort, page = i, size = Model.pageSize })</li>
                 }
                 <li class="disabled">@Html.ActionLink(Model.pageNumber.ToString(), "Index", new { Sort = Model.sort, page = Model.pageNumber, size = Model.pageSize })</li>
-                @for (int i = Model.pageNumber + 1; i < Model.totalPageCount; i++)
+                @for (int i = Model.pageNumber + 1; i <= Model.totalPageCount; i++)
                 {
                     <li class="active">@Html.ActionLink(i.ToString(), "Index", new { Sort = Model.sort, page = i, size = Model.pageSize })</li>
                 }
@@ -73,14 +101,30 @@
                 }
 
             </ul>
-       <ul class="pagination">
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            <ul class="pagination">
 
-            
+                @if (Model.pageSize == 5)
+                {
+                    <li class="active">@Html.ActionLink("5", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 5 }) </li>
+                    <li>@Html.ActionLink("10", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 10 })</li>
+                    <li>@Html.ActionLink("20", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 20 })</li>
+
+                }
+                @if (Model.pageSize == 10)
+                {
                     <li>@Html.ActionLink("5", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 5 }) </li>
-               
                     <li class="active">@Html.ActionLink("10", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 10 })</li>
-                
-             
+                    <li>@Html.ActionLink("20", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 20 })</li>
+
+                }
+                @if (Model.pageSize == 20)
+                {
+                    <li>@Html.ActionLink("5", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 5 }) </li>
+                    <li>@Html.ActionLink("10", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 10 })</li>
+                    <li class="active">@Html.ActionLink("20", "Index", new { Sort = Model.sort, page = Model.pageNumber, size = 20 })</li>
+
+                }
             </ul>
         </nav>
     </div>
